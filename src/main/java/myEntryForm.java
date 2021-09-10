@@ -1,7 +1,6 @@
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,13 +10,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
 import java.util.concurrent.CompletableFuture;
 
 public class myEntryForm {
@@ -51,9 +49,8 @@ public class myEntryForm {
                 }
                 response.thenApply( s -> {
                     try {
-                        printJsonToList( s );
+                        printJsonToTable( s );
                     } catch (Exception jsonException) {
-                        System.out.println( "Error " + jsonException.toString() );
                         jsonException.printStackTrace();
                     }
                     return s;
@@ -81,19 +78,15 @@ public class myEntryForm {
         frame.setVisible(true);
     }
 
-    public void printJsonToList(JSONObject jsonObject ) throws JSONException {
+    public void printJsonToTable( JSONObject jsonObject ) throws JSONException {
         Iterator x = jsonObject.keys();
-        JSONArray jsonArray = new JSONArray();
         int countRow = 0;
-        model.setRowCount(0);
+        model.setRowCount( countRow );
         while ( x.hasNext() ) {
             String key = (String) x.next();
-            jsonArray.put( jsonObject.get(key) );
             model.insertRow( countRow, new Object[]{ key, jsonObject.get(key)} );
             countRow++;
         }
-        //resTable.setModel(model);
-        System.out.println( "Print array" + jsonArray + model );
     }
 
     public CompletableFuture<JSONObject> getMyUrl(String uri) throws JSONException {
