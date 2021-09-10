@@ -8,6 +8,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -25,15 +28,21 @@ public class myEntryForm {
     private JButton helloButton;
     private JLabel resLabel;
     private JTable resTable;
+    private JLabel resLabelCaption;
     DefaultTableModel model = (DefaultTableModel) resTable.getModel();
 
     public myEntryForm() {
+        model.addColumn("key");
+        model.addColumn("value");
         helloButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nameTextFieldString = "Hello " + nameTextField.getText();
+                String nameTextFieldString = nameTextField.getText();
                 resLabel.setText( nameTextFieldString );
-                String url = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY";
+                resLabel.setForeground(Color.BLUE.darker());
+                resLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                resLabelCaption.setText("Fetched ");
+                String url = nameTextField.getText();
                 CompletableFuture<JSONObject> response = null;
                 try {
                     response = getMyUrl( url );
@@ -42,7 +51,6 @@ public class myEntryForm {
                 }
                 response.thenApply( s -> {
                     try {
-                        System.out.println( s.getString("title") );
                         printJsonToList( s );
                     } catch (Exception jsonException) {
                         System.out.println( "Error " + jsonException.toString() );
@@ -50,6 +58,17 @@ public class myEntryForm {
                     }
                     return s;
                     } );
+            }
+        });
+        resLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                try {
+                    Desktop.getDesktop().browse(new URI(resLabel.getText()));
+                } catch (URISyntaxException | IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
@@ -65,12 +84,13 @@ public class myEntryForm {
     public void printJsonToList(JSONObject jsonObject ) throws JSONException {
         Iterator x = jsonObject.keys();
         JSONArray jsonArray = new JSONArray();
-        model.addColumn("aa");
-        model.addColumn("sss");
+        int countRow = 0;
+        model.setRowCount(0);
         while ( x.hasNext() ) {
             String key = (String) x.next();
             jsonArray.put( jsonObject.get(key) );
-            model.addRow(new Object[]{"k", "s"});
+            model.insertRow( countRow, new Object[]{ key, jsonObject.get(key)} );
+            countRow++;
         }
         //resTable.setModel(model);
         System.out.println( "Print array" + jsonArray + model );
@@ -94,8 +114,4 @@ public class myEntryForm {
                 });
     }
 
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 }
