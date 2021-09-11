@@ -29,53 +29,48 @@ public class myEntryForm {
     private JLabel resLabelCaption;
     DefaultTableModel model;
 
-
     public myEntryForm() {
 
-        model = resTable != null ? (DefaultTableModel) resTable.getModel() : null;
+        model = (DefaultTableModel) resTable.getModel();
+        model.addColumn("key");
+        model.addColumn("value");
 
-        if (model != null) {
-            model.addColumn("key");
-            model.addColumn("value");
-        }
-        if (helloButton != null)
-            helloButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String nameTextFieldString = nameTextField.getText();
-                    resLabel.setText(nameTextFieldString);
-                    resLabel.setForeground(Color.BLUE.darker());
-                    resLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    resLabelCaption.setText("Fetched ");
-                    String url = nameTextField.getText();
-                    CompletableFuture<JSONObject> response = null;
+        helloButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nameTextFieldString = nameTextField.getText();
+                resLabel.setText(nameTextFieldString);
+                resLabel.setForeground(Color.BLUE.darker());
+                resLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                resLabelCaption.setText("Fetched ");
+                String url = nameTextField.getText();
+                CompletableFuture<JSONObject> response = null;
+                try {
+                    response = getMyUrl(url);
+                } catch (JSONException jsonException) {
+                    jsonException.printStackTrace();
+                }
+                response.thenApply(s -> {
                     try {
-                        response = getMyUrl(url);
-                    } catch (JSONException jsonException) {
+                        printJsonToTable(s);
+                    } catch (Exception jsonException) {
                         jsonException.printStackTrace();
                     }
-                    response.thenApply(s -> {
-                        try {
-                            printJsonToTable(s);
-                        } catch (Exception jsonException) {
-                            jsonException.printStackTrace();
-                        }
-                        return s;
-                    });
+                    return s;
+                });
+            }
+        });
+        resLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                try {
+                    Desktop.getDesktop().browse(new URI(resLabel.getText()));
+                } catch (URISyntaxException | IOException e1) {
+                    e1.printStackTrace();
                 }
-            });
-        if (resLabel != null)
-            resLabel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    super.mouseClicked(e);
-                    try {
-                        Desktop.getDesktop().browse(new URI(resLabel.getText()));
-                    } catch (URISyntaxException | IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            });
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -89,11 +84,10 @@ public class myEntryForm {
     public void printJsonToTable(JSONObject jsonObject) throws JSONException {
         Iterator x = jsonObject.keys();
         int countRow = 0;
-            model.setRowCount(countRow);
+        model.setRowCount(countRow);
         while (x.hasNext()) {
             String key = (String) x.next();
-
-                model.insertRow(countRow, new Object[]{key, jsonObject.get(key)});
+            model.insertRow(countRow, new Object[]{key, jsonObject.get(key)});
             countRow++;
         }
     }
@@ -102,6 +96,9 @@ public class myEntryForm {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
+                .header("Accept", "application/json")
+                .header("Content-Type", "text/html; charset=UTF-8")
+                .GET()
                 .build();
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(s -> {
