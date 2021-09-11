@@ -1,4 +1,5 @@
-import org.json.JSONArray;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,53 +22,60 @@ import java.util.concurrent.CompletableFuture;
 public class myEntryForm {
 
     private JPanel rootPanel;
-    private JLabel helloLabel;
     private JTextField nameTextField;
     private JButton helloButton;
-    private JLabel resLabel;
     private JTable resTable;
+    private JLabel resLabel;
     private JLabel resLabelCaption;
-    DefaultTableModel model = (DefaultTableModel) resTable.getModel();
+    DefaultTableModel model;
+
 
     public myEntryForm() {
-        model.addColumn("key");
-        model.addColumn("value");
-        helloButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nameTextFieldString = nameTextField.getText();
-                resLabel.setText( nameTextFieldString );
-                resLabel.setForeground(Color.BLUE.darker());
-                resLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                resLabelCaption.setText("Fetched ");
-                String url = nameTextField.getText();
-                CompletableFuture<JSONObject> response = null;
-                try {
-                    response = getMyUrl( url );
-                } catch (JSONException jsonException) {
-                    jsonException.printStackTrace();
-                }
-                response.thenApply( s -> {
+
+        model = resTable != null ? (DefaultTableModel) resTable.getModel() : null;
+
+        if (model != null) {
+            model.addColumn("key");
+            model.addColumn("value");
+        }
+        if (helloButton != null)
+            helloButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String nameTextFieldString = nameTextField.getText();
+                    resLabel.setText(nameTextFieldString);
+                    resLabel.setForeground(Color.BLUE.darker());
+                    resLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    resLabelCaption.setText("Fetched ");
+                    String url = nameTextField.getText();
+                    CompletableFuture<JSONObject> response = null;
                     try {
-                        printJsonToTable( s );
-                    } catch (Exception jsonException) {
+                        response = getMyUrl(url);
+                    } catch (JSONException jsonException) {
                         jsonException.printStackTrace();
                     }
-                    return s;
-                    } );
-            }
-        });
-        resLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                try {
-                    Desktop.getDesktop().browse(new URI(resLabel.getText()));
-                } catch (URISyntaxException | IOException e1) {
-                    e1.printStackTrace();
+                    response.thenApply(s -> {
+                        try {
+                            printJsonToTable(s);
+                        } catch (Exception jsonException) {
+                            jsonException.printStackTrace();
+                        }
+                        return s;
+                    });
                 }
-            }
-        });
+            });
+        if (resLabel != null)
+            resLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    super.mouseClicked(e);
+                    try {
+                        Desktop.getDesktop().browse(new URI(resLabel.getText()));
+                    } catch (URISyntaxException | IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            });
     }
 
     public static void main(String[] args) {
@@ -78,13 +86,14 @@ public class myEntryForm {
         frame.setVisible(true);
     }
 
-    public void printJsonToTable( JSONObject jsonObject ) throws JSONException {
+    public void printJsonToTable(JSONObject jsonObject) throws JSONException {
         Iterator x = jsonObject.keys();
         int countRow = 0;
-        model.setRowCount( countRow );
-        while ( x.hasNext() ) {
+            model.setRowCount(countRow);
+        while (x.hasNext()) {
             String key = (String) x.next();
-            model.insertRow( countRow, new Object[]{ key, jsonObject.get(key)} );
+
+                model.insertRow(countRow, new Object[]{key, jsonObject.get(key)});
             countRow++;
         }
     }
@@ -94,8 +103,8 @@ public class myEntryForm {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
                 .build();
-        return client.sendAsync( request, HttpResponse.BodyHandlers.ofString() )
-                .thenApply( s -> {
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(s -> {
                     String entity = s.body();
                     JSONObject o = null;
                     try {
@@ -107,4 +116,46 @@ public class myEntryForm {
                 });
     }
 
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        rootPanel = new JPanel();
+        rootPanel.setLayout(new GridLayoutManager(5, 2, new Insets(0, 0, 0, 0), -1, -1));
+        helloButton = new JButton();
+        helloButton.setText("Fetch");
+        rootPanel.add(helloButton, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        nameTextField = new JTextField();
+        nameTextField.setText("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY");
+        rootPanel.add(nameTextField, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        resLabelCaption = new JLabel();
+        resLabelCaption.setText("");
+        rootPanel.add(resLabelCaption, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 25), null, null, 0, false));
+        resLabel = new JLabel();
+        resLabel.setText("Label");
+        rootPanel.add(resLabel, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        rootPanel.add(scrollPane1, new GridConstraints(4, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        resTable = new JTable();
+        resTable.setEditingColumn(-1);
+        scrollPane1.setViewportView(resTable);
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return rootPanel;
+    }
 }

@@ -8,17 +8,6 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="8dc4" class="javax.swing.JLabel" binding="helloLabel">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
-            <minimum-size width="-1" height="25"/>
-          </grid>
-        </constraints>
-        <properties>
-          <labelFor value="a4f2"/>
-          <text value="Please enter JSON {key : value} URL"/>
-        </properties>
-      </component>
       <component id="3268a" class="javax.swing.JButton" binding="helloButton">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -37,9 +26,9 @@
           <text value="https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"/>
         </properties>
       </component>
-      <component id="d6d4" class="javax.swing.JLabel" binding="resLabel">
+      <component id="d6d4" class="javax.swing.JLabel" binding="resLabelCaption">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
             <minimum-size width="-1" height="25"/>
           </grid>
         </constraints>
@@ -47,7 +36,15 @@
           <text value=""/>
         </properties>
       </component>
-      <scrollpane id="a4f2">
+      <component id="6c088" class="javax.swing.JLabel" binding="resLabel">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Label"/>
+        </properties>
+      </component>
+      <scrollpane id="97e5d">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -62,14 +59,6 @@
           </component>
         </children>
       </scrollpane>
-      <component id="8acd0" class="javax.swing.JLabel" binding="resLabelCaption">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value=""/>
-        </properties>
-      </component>
     </children>
   </grid>
 </form>
