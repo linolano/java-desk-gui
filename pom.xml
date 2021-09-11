@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>GuiTest2</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>testUiClient</artifactId>
+    <version>1</version>
     <packaging>jar</packaging>
     <build>
         <plugins>
@@ -41,7 +41,6 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>testUiClient</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
